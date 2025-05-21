@@ -41,6 +41,7 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
+        logger.info("Запуск метода поиска пользователя");
         if (userDao.findById(id) == null) {
             logger.error("Пользователь не найден");
         } else {
@@ -55,6 +56,7 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
+        logger.info("Запуск метода поиска всех пользователей");
         return userDao.findAll();
     }
 
