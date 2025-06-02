@@ -2,6 +2,7 @@ package AstonHomeWork.services;
 
 import AstonHomeWork.DAO.UserDAO;
 import AstonHomeWork.DAO.UserDAOImpl;
+import AstonHomeWork.exceptions.InvalidDataException;
 import AstonHomeWork.models.User;
 import jakarta.validation.*;
 import org.hibernate.SessionFactory;
@@ -21,6 +22,11 @@ public class UserService {
         this.userDao = new UserDAOImpl(sessionFactory);
     }
 
+    public UserService(UserDAO userDao) {
+        this.sessionFactory = new Configuration().configure().buildSessionFactory();
+        this.userDao = userDao;
+    }
+
     public void createUser(String name, String email, int age) {
         logger.info("Запуск метода создания пользователя");
         try {
@@ -29,25 +35,23 @@ public class UserService {
             user.setEmail(email);
             user.setAge(age);
             userDao.save(user);
+            logger.info("Пользователь создан!");
         } catch (ConstraintViolationException ve) {
-            logger.error("Ошибка валидации при создании пользователя");
-            ve.getConstraintViolations().
-                            forEach(v -> {
-                                System.out.println(v.getMessage());
-                                System.out.println(v.getPropertyPath().toString());
-                                System.out.println(v.getInvalidValue());});
-            throw new IllegalArgumentException("Ошибка валидации " + ve.getMessage());
+            logger.error("Ошибка валидации при создании пользователя {}", ve.getMessage());
+            throw new InvalidDataException("Неверно заполнены поля");
+        } catch (NullPointerException npe) {
+            logger.error("Поля не должны быть пустыми {}", npe.getMessage());
+            throw new InvalidDataException("Поля не должны быть пустыми");
         }
     }
 
     public User getUserById(Long id) {
         logger.info("Запуск метода поиска пользователя");
-        if (userDao.findById(id) == null) {
+        User user = userDao.findById(id);  // Сохраняем результат в переменную
+        if (user == null) {
             logger.error("Пользователь не найден");
-        } else {
-            return userDao.findById(id);
-        }
-        return null;
+        } else logger.info("Пользователь найден");
+        return user;
     }
 
     public User getUserByEmail(String email) {
@@ -72,13 +76,11 @@ public class UserService {
                 logger.info("Пользователь обновлен!");
             }
         } catch (ConstraintViolationException ve) {
-            logger.error("Ошибка валидации при обновлении пользователя ");
-            ve.getConstraintViolations().
-                    forEach(v -> {
-                        System.out.println(v.getMessage());
-                        System.out.println(v.getPropertyPath().toString());
-                        System.out.println(v.getInvalidValue());});
-            throw new IllegalArgumentException("Ошибка валидации " + ve.getMessage());
+            logger.error("Ошибка валидации при обновлении пользователя {} ", ve.getMessage());
+            throw new InvalidDataException("Неверно заполнены поля");
+        } catch (NullPointerException npe) {
+            logger.error("Поля не должны быть пустыми {}", npe.getMessage());
+            throw new InvalidDataException("Поля не должны быть пустые");
         }
     }
 
@@ -88,7 +90,7 @@ public class UserService {
             userDao.deleteById(id);
             logger.info("Пользователь удален!");
         } else {
-            logger.error("Пользователя с таким айди не существует!");
+            logger.error("Пользователя с id {} не существует!", id);
         }
     }
 

@@ -1,10 +1,7 @@
 package AstonHomeWork.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -24,11 +21,13 @@ public class User {
 
     @Column(name = "name")
     @NotEmpty(message = "Поле name не должно быть пустое!")
+    @NotNull
     private String name;
 
     @Column(name = "email")
     @Pattern(regexp = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",message = "Неверный формат mail!")
     @NotEmpty(message = "Поле email не должно быть пустое!")
+    @NotNull
     private String email;
 
     @Min(value = 1,message = "Возраст должен быть положительным!")

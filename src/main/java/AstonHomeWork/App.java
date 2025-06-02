@@ -53,14 +53,12 @@ public class App {
         System.out.print("Введите возраст: ");
         int age = scanner.nextInt();
         userService.createUser(name, email, age);
-        System.out.println("Пользователь создан!");
     }
 
     private static void getUser() {
         System.out.print("Введите ID пользователя: ");
         Long id = scanner.nextLong();
         var user = userService.getUserById(id);
-        System.out.println(user != null ?"Пользователь: " + user : "Пользователь не найден!");
     }
 
     private static void listUsers() {
