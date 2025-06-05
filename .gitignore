@@ -5,8 +5,6 @@ target/
 
 ### IntelliJ IDEA ###
 .idea/
-src/main/resources/hibernate.cfg.xml
-src/main/resources/logback.xml
 *.iws
 *.iml
 *.ipr
